@@ -115,13 +115,25 @@ popd
 # real problems. Once these are on circleci and a smoke-binary-build is added
 # to PRs then this should stop happening and these can be re-enabled.
 echo "Not running unit tests. Hopefully these problems are caught by CI"
-exit 0
+# exit 0
 
 
 ##############################################################################
 # Running unit tests (except not right now)
 ##############################################################################
 echo "$(date) :: Starting tests for $package_type package for python$py_ver and $cuda_ver"
+
+if [[ "$OSTYPE" == "msys" ]]; then
+    echo
+    echo "$(date) :: Calling 'python test/run_test.py -v'"
+
+    python test/run_test.py -v
+
+    echo
+    echo "$(date) :: Finished 'python test/run_test.py -v'"
+
+    exit 0
+fi
 
 # We keep track of exact tests to skip, as otherwise we would be hardly running
 # any tests. But b/c of issues working with pytest/normal-python-test/ and b/c
@@ -151,7 +163,7 @@ if [[ "$cuda_ver" == 'cpu' ]]; then
     entire_file_exclusions+=("nccl")
 fi
 
-if [[ "$(uname)" == 'Darwin' || "$OSTYPE" == "msys" ]]; then
+if [[ "$(uname)" == 'Darwin' ]]; then
     # pytest on Mac doesn't like the exits in these files
     entire_file_exclusions+=('c10d')
     entire_file_exclusions+=('distributed')
@@ -160,7 +172,6 @@ if [[ "$(uname)" == 'Darwin' || "$OSTYPE" == "msys" ]]; then
     # later without pytest
     entire_file_exclusions+=('thd_distributed')
 fi
-
 
 #
 # Universal flaky tests

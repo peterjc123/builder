@@ -4,18 +4,17 @@ trigger: none
 pr: none
 
 variables:
-  # pytorch.build.version: '1.0'
-  # pytorch.build.number: 1
-  # pytorch.branch: master
-  # pytorch.repo: pytorch
-  build.linux.enabled: false
+  pytorch.build.version: '1.0.0'
+  pytorch.build.number: 1
+  pytorch.branch: master
+  pytorch.repo: pytorch
   build.cpu.enabled: true
   build.cuda.enabled: true
   build.wheels.enabled: true
-  build.conda.enabled: true
-  use.sccache.cpu: 0
+  build.conda.enabled: false
+  use.sccache.cpu: 1
   use.sccache.cuda: 1
-  self.hosted.agent.cpu: false
+  self.hosted.agent.cpu: true
   self.hosted.agent.cuda: true
 
 jobs:
@@ -24,6 +23,7 @@ jobs:
   cancelTimeoutInMinutes: 5
   condition: and(eq(variables['build.cpu.enabled'], 'true'), eq(variables['build.wheels.enabled'], 'true'))
   variables:
+    PACKAGE: wheels_test
     CUDA_VERSION: cpu
     USE_SCCACHE: $(use.sccache.cpu)
   strategy:
@@ -40,7 +40,7 @@ jobs:
         BUILD_PYTHONLESS: 1
 
   pool:
-    vmImage: 'win1803'
+    name: 'release'
 
   steps:
   - checkout: self
@@ -71,41 +71,25 @@ jobs:
 
       modifyEnvironment: true
 
-  - task: BatchScript@1
-    displayName: 'Setup nightly variables'
-    inputs:
-      filename: 'windows/internal/nightly_defaults.bat'
-
-      modifyEnvironment: true
-
   - script: 'call windows/build_pytorch.bat %CUDA_VERSION% %PYTORCH_BUILD_VERSION% %PYTORCH_BUILD_NUMBER%'
     displayName: Build
-    env:
-      MAX_JOBS: 2
 
-  - task: PublishTestResults@2 # No test results to publish
+  - task: BatchScript@1
+    displayName: 'Upload artifacts'
     inputs:
-      testResultsFiles: 'windows/pytorch/test/**/*.xml'
-      testRunTitle: 'Publish test results'
-    enabled: false
+      filename: 'windows/internal/publish.bat'
 
-  - template: templates/upload_to_s3.yml
-    parameters:
-      cuVer: 'cpu'
-      cudaVer: 'cpu'
+      modifyEnvironment: false
 
 - job: 'Windows_CPU_Conda_Build'
   timeoutInMinutes: 0
   cancelTimeoutInMinutes: 5
   condition: and(eq(variables['build.cpu.enabled'], 'true'), eq(variables['build.conda.enabled'], 'true'))
   variables:
-  - group: peterjc_anaconda_token
-  - name: CUDA_VERSION
-    value: cpu
-  - name: USE_SCCACHE
-    value: $(use.sccache.cpu)
-  - name: PYTORCH_FINAL_PACKAGE_DIR
-    value: '$(Build.Repository.LocalPath)\windows\output'
+    PACKAGE: conda_test
+    CUDA_VERSION: cpu
+    USE_SCCACHE: $(use.sccache.cpu)
+    PYTORCH_FINAL_PACKAGE_DIR: '$(Build.Repository.LocalPath)\windows\output'
 
   strategy:
     maxParallel: 10
@@ -118,7 +102,7 @@ jobs:
         DESIRED_PYTHON: 3.7
 
   pool:
-    vmImage: 'win1803'
+    name: 'release'
 
   steps:
   - checkout: self
@@ -149,76 +133,25 @@ jobs:
 
       modifyEnvironment: true
 
-  - task: BatchScript@1
-    displayName: 'Setup nightly variables'
-    inputs:
-      filename: 'windows/internal/nightly_defaults.bat'
-
-      modifyEnvironment: true
-
   - script: 'if not exist %PYTORCH_FINAL_PACKAGE_DIR% mkdir %PYTORCH_FINAL_PACKAGE_DIR%'
     displayName: 'Create final package directory'
 
   - bash: './conda/build_pytorch.sh $CUDA_VERSION $PYTORCH_BUILD_VERSION $PYTORCH_BUILD_NUMBER'
     displayName: 'Build'
-    env:
-      MAX_JOBS: 2
 
-  - task: PublishTestResults@2
+  - task: BatchScript@1
+    displayName: 'Upload artifacts'
     inputs:
-      testResultsFiles: 'windows/pytorch/test/**/*.xml'
-      testRunTitle: 'Publish test results'
-    enabled: false
+      filename: 'windows/internal/publish.bat'
 
-  - script: 'call windows/internal/upload.bat'
-    displayName: 'Upload packages to Anaconda Cloud'
-    env:
-      PYTORCH_ANACONDA_USERNAME: $(peterjc_conda_username)
-      PYTORCH_ANACONDA_PASSWORD: $(peterjc_conda_password)
-
-- job: 'Linux_CPU_Conda_Build'
-  timeoutInMinutes: 0
-  cancelTimeoutInMinutes: 5
-  condition: and(and(eq(variables['build.cpu.enabled'], 'true'), eq(variables['build.linux.enabled'], 'true')), eq(variables['build.conda.enabled'], 'true'))
-  variables:
-    CUDA_VERSION: cpu
-    TORCH_CONDA_BUILD_FOLDER: pytorch-nightly
-    PYTORCH_FINAL_PACKAGE_DIR: '$(Build.Repository.LocalPath)/output'
-
-  strategy:
-    maxParallel: 10
-    matrix:
-      PY3.5:
-        DESIRED_PYTHON: 3.5
-
-  pool:
-    vmImage: 'ubuntu-16.04'
-
-  steps:
-  - checkout: self
-    clean: true
-
-  - script: 'sudo apt-get install p7zip-full'
-    displayName: 'Install 7Zip'
-
-  - task: CondaEnvironment@1
-    displayName: 'Install conda-build'
-    inputs:
-      packageSpecs: 'conda-build'
-
-  - script: 'mkdir %PYTORCH_FINAL_PACKAGE_DIR%'
-    displayName: 'Create final package directory'
-
-  - bash: './conda/build_pytorch.sh $CUDA_VERSION $PYTORCH_BUILD_VERSION $PYTORCH_BUILD_NUMBER'
-    displayName: 'Build'
-    env:
-      MAX_JOBS: 2
+      modifyEnvironment: false
 
 - job: 'Windows_CUDA_Wheels_Build'
   timeoutInMinutes: 0
   cancelTimeoutInMinutes: 5
   condition: and(eq(variables['build.cuda.enabled'], 'true'), eq(variables['build.wheels.enabled'], 'true'))
   variables:
+    PACKAGE: wheels_test
     USE_SCCACHE: $(use.sccache.cuda)
   strategy:
     maxParallel: 10
@@ -236,48 +169,35 @@ jobs:
         DESIRED_PYTHON: 3
         BUILD_PYTHONLESS: 1
         CUDA_VERSION: 90
-      # PY3.5_80:
-      #   DESIRED_PYTHON: 3.5
-      #   CUDA_VERSION: 80
-      # PY3.6_80:
-      #   DESIRED_PYTHON: 3.6
-      #   CUDA_VERSION: 80
-      # PY3.7_80:
-      #   DESIRED_PYTHON: 3.7
-      #   CUDA_VERSION: 80
+      PY3.5_80:
+        DESIRED_PYTHON: 3.5
+        CUDA_VERSION: 80
+      PY3.6_80:
+        DESIRED_PYTHON: 3.6
+        CUDA_VERSION: 80
+      PY3.7_80:
+        DESIRED_PYTHON: 3.7
+        CUDA_VERSION: 80
       LIBTORCH_80:
         DESIRED_PYTHON: 3
         BUILD_PYTHONLESS: 1
         CUDA_VERSION: 80
-      # PY3.5_92:
-      #   DESIRED_PYTHON: 3.5
-      #   CUDA_VERSION: 92
-      # PY3.6_92:
-      #   DESIRED_PYTHON: 3.6
-      #   CUDA_VERSION: 92
-      # PY3.7_92:
-      #   DESIRED_PYTHON: 3.7
-      #   CUDA_VERSION: 92
-      LIBTORCH_92:
-        DESIRED_PYTHON: 3
-        BUILD_PYTHONLESS: 1
-        CUDA_VERSION: 92
-      # PY3.5_100:
-      #   DESIRED_PYTHON: 3.5
-      #   CUDA_VERSION: 100
-      # PY3.6_100:
-      #   DESIRED_PYTHON: 3.6
-      #   CUDA_VERSION: 100
-      # PY3.7_100:
-      #   DESIRED_PYTHON: 3.7
-      #   CUDA_VERSION: 100
+      PY3.5_100:
+        DESIRED_PYTHON: 3.5
+        CUDA_VERSION: 100
+      PY3.6_100:
+        DESIRED_PYTHON: 3.6
+        CUDA_VERSION: 100
+      PY3.7_100:
+        DESIRED_PYTHON: 3.7
+        CUDA_VERSION: 100
       LIBTORCH_100:
         DESIRED_PYTHON: 3
         BUILD_PYTHONLESS: 1
         CUDA_VERSION: 100
 
   pool:
-    name: 'pytorch'
+    name: 'release'
 
   steps:
   - checkout: self
@@ -315,37 +235,24 @@ jobs:
 
       modifyEnvironment: false
 
-  - task: BatchScript@1
-    displayName: 'Setup nightly variables'
-    inputs:
-      filename: 'windows/internal/nightly_defaults.bat'
-
-      modifyEnvironment: true
-
   - script: 'call windows/build_pytorch.bat %CUDA_VERSION% %PYTORCH_BUILD_VERSION% %PYTORCH_BUILD_NUMBER%'
     displayName: Build
 
-  - task: PublishTestResults@2 # No test results to publish
+  - task: BatchScript@1
+    displayName: 'Upload artifacts'
     inputs:
-      testResultsFiles: 'windows/pytorch/test/**/*.xml'
-      testRunTitle: 'Publish test results'
-    enabled: false
+      filename: 'windows/internal/publish.bat'
 
-  - template: templates/upload_to_s3.yml
-    parameters:
-      cuVer: 'cu$(CUDA_VERSION)'
-      cudaVer: 'cuda$(CUDA_VERSION)'
+      modifyEnvironment: false
 
 - job: 'Windows_CUDA_Conda_Build'
   timeoutInMinutes: 0
   condition: and(eq(variables['build.cuda.enabled'], 'true'), eq(variables['build.conda.enabled'], 'true'))
   cancelTimeoutInMinutes: 5
   variables:
-  - group: peterjc_anaconda_token
-  - name: USE_SCCACHE
-    value: $(use.sccache.cuda)
-  - name: PYTORCH_FINAL_PACKAGE_DIR
-    value: '$(Build.Repository.LocalPath)\windows\output'
+    PACKAGE: conda_test
+    USE_SCCACHE: $(use.sccache.cuda)
+    PYTORCH_FINAL_PACKAGE_DIR: '$(Build.Repository.LocalPath)\windows\output'
 
   strategy:
     maxParallel: 10
@@ -359,36 +266,27 @@ jobs:
       PY3.7_90:
         DESIRED_PYTHON: 3.7
         CUDA_VERSION: 90
-      # PY3.5_80:
-      #   DESIRED_PYTHON: 3.5
-      #   CUDA_VERSION: 80
-      # PY3.6_80:
-      #   DESIRED_PYTHON: 3.6
-      #   CUDA_VERSION: 80
-      # PY3.7_80:
-      #   DESIRED_PYTHON: 3.7
-      #   CUDA_VERSION: 80
-      # PY3.5_92:
-      #   DESIRED_PYTHON: 3.5
-      #   CUDA_VERSION: 92
-      # PY3.6_92:
-      #   DESIRED_PYTHON: 3.6
-      #   CUDA_VERSION: 92
-      # PY3.7_92:
-      #   DESIRED_PYTHON: 3.7
-      #   CUDA_VERSION: 92
-      # PY3.5_100:
-      #   DESIRED_PYTHON: 3.5
-      #   CUDA_VERSION: 100
-      # PY3.6_100:
-      #   DESIRED_PYTHON: 3.6
-      #   CUDA_VERSION: 100
-      # PY3.7_100:
-      #   DESIRED_PYTHON: 3.7
-      #   CUDA_VERSION: 100
+      PY3.5_80:
+        DESIRED_PYTHON: 3.5
+        CUDA_VERSION: 80
+      PY3.6_80:
+        DESIRED_PYTHON: 3.6
+        CUDA_VERSION: 80
+      PY3.7_80:
+        DESIRED_PYTHON: 3.7
+        CUDA_VERSION: 80
+      PY3.5_100:
+        DESIRED_PYTHON: 3.5
+        CUDA_VERSION: 100
+      PY3.6_100:
+        DESIRED_PYTHON: 3.6
+        CUDA_VERSION: 100
+      PY3.7_100:
+        DESIRED_PYTHON: 3.7
+        CUDA_VERSION: 100
 
   pool:
-    name: 'pytorch'
+    name: 'release'
 
   steps:
   - checkout: self
@@ -426,27 +324,15 @@ jobs:
 
       modifyEnvironment: false
 
-  - task: BatchScript@1
-    displayName: 'Setup nightly variables'
-    inputs:
-      filename: 'windows/internal/nightly_defaults.bat'
-
-      modifyEnvironment: true
-
   - script: 'if not exist %PYTORCH_FINAL_PACKAGE_DIR% mkdir %PYTORCH_FINAL_PACKAGE_DIR%'
     displayName: 'Create final package directory'
 
   - bash: './conda/build_pytorch.sh $CUDA_VERSION $PYTORCH_BUILD_VERSION $PYTORCH_BUILD_NUMBER'
     displayName: 'Build'
 
-  - task: PublishTestResults@2
+  - task: BatchScript@1
+    displayName: 'Upload artifacts'
     inputs:
-      testResultsFiles: 'windows/pytorch/test/**/*.xml'
-      testRunTitle: 'Publish test results'
-    enabled: false
+      filename: 'windows/internal/publish.bat'
 
-  - script: 'call windows/internal/upload.bat'
-    displayName: 'Upload packages to Anaconda Cloud'
-    env:
-      PYTORCH_ANACONDA_USERNAME: $(peterjc_conda_username)
-      PYTORCH_ANACONDA_PASSWORD: $(peterjc_conda_password)
+      modifyEnvironment: false
