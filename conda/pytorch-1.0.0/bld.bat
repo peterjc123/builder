@@ -41,8 +41,8 @@ IF "%USE_SCCACHE%" == "1" (
 )
 
 if NOT "%build_with_cuda%" == "" (
-    curl https://s3.amazonaws.com/ossci-windows/magma_cuda%CUDA_VERSION%_release_mkl_2018.2.185.7z -k -O
-    7z x -aoa magma_cuda%CUDA_VERSION%_release_mkl_2018.2.185.7z -omagma_cuda%CUDA_VERSION%_release
+    curl https://s3.amazonaws.com/ossci-windows/magma_2.4.0_cuda%CUDA_VERSION%_release.7z -k -O
+    7z x -aoa magma_2.4.0_cuda%CUDA_VERSION%_release.7z -omagma_cuda%CUDA_VERSION%_release
     if "%CUDA_VERSION%" == "92" (
         set MAGMA_HOME=%cd%\magma_cuda92_release\magma_cuda92\magma\install
     ) else (
