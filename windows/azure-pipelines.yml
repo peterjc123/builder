@@ -6,12 +6,12 @@ pr: none
 variables:
   pytorch.build.version: '1.0.0'
   pytorch.build.number: 1
-  pytorch.branch: master
+  pytorch.branch: v1.0
   pytorch.repo: pytorch
   build.cpu.enabled: true
   build.cuda.enabled: true
   build.wheels.enabled: true
-  build.conda.enabled: false
+  build.conda.enabled: true
   use.sccache.cpu: 1
   use.sccache.cuda: 1
   self.hosted.agent.cpu: true
@@ -90,6 +90,7 @@ jobs:
     CUDA_VERSION: cpu
     USE_SCCACHE: $(use.sccache.cpu)
     PYTORCH_FINAL_PACKAGE_DIR: '$(Build.Repository.LocalPath)\windows\output'
+    TORCH_CONDA_BUILD_FOLDER: 'pytorch-1.0.0'
 
   strategy:
     maxParallel: 10
@@ -253,6 +254,7 @@ jobs:
     PACKAGE: conda_test
     USE_SCCACHE: $(use.sccache.cuda)
     PYTORCH_FINAL_PACKAGE_DIR: '$(Build.Repository.LocalPath)\windows\output'
+    TORCH_CONDA_BUILD_FOLDER: 'pytorch-1.0.0'
 
   strategy:
     maxParallel: 10
