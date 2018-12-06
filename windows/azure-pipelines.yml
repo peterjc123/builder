@@ -8,7 +8,7 @@ variables:
   pytorch.build.number: 1
   pytorch.branch: v1.0
   pytorch.repo: pytorch
-  build.cpu.enabled: false
+  build.cpu.enabled: true
   build.cuda.enabled: true
   build.wheels.enabled: true
   build.conda.enabled: true
