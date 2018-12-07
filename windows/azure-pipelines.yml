@@ -11,7 +11,7 @@ variables:
   build.cpu.enabled: false
   build.cuda.enabled: true
   build.wheels.enabled: true
-  build.conda.enabled: true
+  build.conda.enabled: false
   use.sccache.cpu: 1
   use.sccache.cuda: 1
   self.hosted.agent.cpu: true
@@ -183,19 +183,19 @@ jobs:
       #   DESIRED_PYTHON: 3
       #   BUILD_PYTHONLESS: 1
       #   CUDA_VERSION: 80
-      PY3.5_100:
-        DESIRED_PYTHON: 3.5
-        CUDA_VERSION: 100
+      # PY3.5_100:
+      #   DESIRED_PYTHON: 3.5
+      #   CUDA_VERSION: 100
       PY3.6_100:
         DESIRED_PYTHON: 3.6
         CUDA_VERSION: 100
-      PY3.7_100:
-        DESIRED_PYTHON: 3.7
-        CUDA_VERSION: 100
-      LIBTORCH_100:
-        DESIRED_PYTHON: 3
-        BUILD_PYTHONLESS: 1
-        CUDA_VERSION: 100
+      # PY3.7_100:
+      #   DESIRED_PYTHON: 3.7
+      #   CUDA_VERSION: 100
+      # LIBTORCH_100:
+      #   DESIRED_PYTHON: 3
+      #   BUILD_PYTHONLESS: 1
+      #   CUDA_VERSION: 100
 
   pool:
     name: 'release'
