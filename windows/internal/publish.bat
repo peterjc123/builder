@@ -9,6 +9,12 @@ if NOT "%CUDA_VERSION%" == "cpu" (
     set PACKAGE_SUFFIX=
 )
 
+if "%PACKAGEFULLNAME%" == "Conda" (
+    set PACKAGE=conda
+) else (
+    set PACKAGE=wheels
+)
+
 set PUBLISH_BRANCH=%PACKAGE%_%DESIRED_PYTHON%%PACKAGE_SUFFIX%
 
 git clone %ARTIFACT_REPO_URL% -b %PUBLISH_BRANCH% --single-branch >nul 2>&1
