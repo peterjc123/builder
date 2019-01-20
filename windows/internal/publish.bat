@@ -58,7 +58,7 @@ if "%RETRY_TIMES%" == "" (
     set /a SLEEP_TIME=%SLEEP_TIME%*2
 )
 
-git push origin %PUBLISH_BRANCH%% -f > nul 2>&1
+git push origin %PUBLISH_BRANCH% -f > nul 2>&1
 
 IF ERRORLEVEL 1 (
     echo Git push retry times remaining: %RETRY_TIMES%
