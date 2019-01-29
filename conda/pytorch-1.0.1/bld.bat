@@ -71,6 +71,20 @@ set CXX=sccache cl
 
 :sccache_end
 
+<<<<<<< HEAD
+=======
+where pip
+where python
+
+curl https://bootstrap.pypa.io/get-pip.py -o get-pip.py
+python get-pip.py
+
+pip install ninja
+
+python -c "import ninja"
+if errorlevel 1 exit /b 1
+
+>>>>>>> .
 python setup.py install
 if errorlevel 1 exit /b 1
 
