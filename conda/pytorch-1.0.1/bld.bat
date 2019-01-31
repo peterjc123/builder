@@ -1,4 +1,4 @@
-@echo on
+@echo off
 
 set TH_BINARY_BUILD=1
 set PYTORCH_BUILD_VERSION=%PKG_VERSION%
