@@ -50,14 +50,14 @@ jobs:
     maxParallel: 10
     matrix:
       ${{ if eq(parameters.spec, 'CPU') }}:
-        PY3.5:
-          DESIRED_PYTHON: 3.5
-          CUDA_VERSION: cpu
+        # PY3.5:
+        #   DESIRED_PYTHON: 3.5
+        #   CUDA_VERSION: cpu
         PY3.6:
-          DESIRED_PYTHON: 3.6
+          DESIRED_PYTHON: 3.6.7
           CUDA_VERSION: cpu
         PY3.7:
-          DESIRED_PYTHON: 3.7
+          DESIRED_PYTHON: 3.7.1
           CUDA_VERSION: cpu
       # ${{ if and(eq(parameters.package, 'Wheels'), eq(parameters.spec, 'CPU')) }}:
       #   LIBTORCH:
