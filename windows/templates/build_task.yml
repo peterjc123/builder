@@ -26,15 +26,15 @@ jobs:
   variables:
     - ${{ if eq(parameters.override, 'true') }}:
       - name: PYTORCH_BUILD_VERSION
-        value: '1.0.1'
+        value: '1.1.0'
       - name: PYTORCH_BUILD_NUMBER
         value: 1
       - name: PYTORCH_REPO
         value: 'pytorch'
       - name: PYTORCH_BRANCH
-        value: '743fdbdb192dd0f07d51d6f94f8b47984484b54f'
+        value: 'master'
       - name: TORCH_CONDA_BUILD_FOLDER
-        value: 'pytorch-1.0.1'
+        value: 'pytorch-1.1.0'
     - ${{ if eq(parameters.msagent, 'true') }}:
       - name: USE_SCCACHE
         value: 0
