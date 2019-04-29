@@ -9,6 +9,14 @@ if NOT "%CUDA_VERSION%" == "cpu" (
     set PACKAGE_SUFFIX=
 )
 
+if not "%DEBUG%" == "" (
+    if "%PACKAGE_SUFFIX%" == "" (
+        set PACKAGE_SUFFIX=_debug
+    ) else (
+        set PACKAGE_SUFFIX=%PACKAGE_SUFFIX%_debug
+    )
+)
+
 if "%PACKAGEFULLNAME%" == "Conda" (
     set PACKAGE=conda
 ) else (
