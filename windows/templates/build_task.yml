@@ -49,16 +49,16 @@ jobs:
   strategy:
     maxParallel: 10
     matrix:
-      # ${{ if eq(parameters.spec, 'CPU') }}:
-      #   PY3.5:
-      #     DESIRED_PYTHON: 3.5
-      #     CUDA_VERSION: cpu
-      #   PY3.6:
-      #     DESIRED_PYTHON: 3.6
-      #     CUDA_VERSION: cpu
-      #   PY3.7:
-      #     DESIRED_PYTHON: 3.7
-      #     CUDA_VERSION: cpu
+      ${{ if eq(parameters.spec, 'CPU') }}:
+        PY3.5:
+          DESIRED_PYTHON: 3.5
+          CUDA_VERSION: cpu
+        PY3.6:
+          DESIRED_PYTHON: 3.6
+          CUDA_VERSION: cpu
+        PY3.7:
+          DESIRED_PYTHON: 3.7
+          CUDA_VERSION: cpu
       ${{ if and(eq(parameters.package, 'Wheels'), eq(parameters.spec, 'CPU')) }}:
         LIBTORCH:
           DESIRED_PYTHON: 3
@@ -69,25 +69,25 @@ jobs:
           CUDA_VERSION: cpu
           BUILD_PYTHONLESS: 1
           DEBUG: 1
-      # ${{ if ne(parameters.spec, 'CPU') }}:
-      #   PY3.5_90:
-      #     DESIRED_PYTHON: 3.5
-      #     CUDA_VERSION: 90
-      #   PY3.6_90:
-      #     DESIRED_PYTHON: 3.6
-      #     CUDA_VERSION: 90
-      #   PY3.7_90:
-      #     DESIRED_PYTHON: 3.7
-      #     CUDA_VERSION: 90
-      #   PY3.5_100:
-      #     DESIRED_PYTHON: 3.5
-      #     CUDA_VERSION: 100
-      #   PY3.6_100:
-      #     DESIRED_PYTHON: 3.6
-      #     CUDA_VERSION: 100
-      #   PY3.7_100:
-      #     DESIRED_PYTHON: 3.7
-      #     CUDA_VERSION: 100
+      ${{ if ne(parameters.spec, 'CPU') }}:
+        PY3.5_90:
+          DESIRED_PYTHON: 3.5
+          CUDA_VERSION: 90
+        PY3.6_90:
+          DESIRED_PYTHON: 3.6
+          CUDA_VERSION: 90
+        PY3.7_90:
+          DESIRED_PYTHON: 3.7
+          CUDA_VERSION: 90
+        PY3.5_100:
+          DESIRED_PYTHON: 3.5
+          CUDA_VERSION: 100
+        PY3.6_100:
+          DESIRED_PYTHON: 3.6
+          CUDA_VERSION: 100
+        PY3.7_100:
+          DESIRED_PYTHON: 3.7
+          CUDA_VERSION: 100
       ${{ if and(ne(parameters.spec, 'CPU'), eq(parameters.package, 'Wheels')) }}:
         LIBTORCH_90:
           DESIRED_PYTHON: 3
