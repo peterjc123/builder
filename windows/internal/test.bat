@@ -62,8 +62,8 @@ if NOT "%CUDA_PREFIX%" == "cpu" if "%NVIDIA_GPU_EXISTS%" == "1" (
 )
 :smoke_test_end
 
-echo Not running unit tests. Hopefully these problems are caught by CI
-goto test_end
+REM echo Not running unit tests. Hopefully these problems are caught by CI
+REM goto test_end
 
 if "%BUILD_VISION%" == "" (
     cd pytorch\test
