@@ -12,7 +12,7 @@ if "%MODULE_NAME%" == "pytorch" (
 )
 
 if "%BUILD_VISION%" == "" (
-    pip install future pytest coverage hypothesis protobuf psutil
+    pip install future pytest coverage hypothesis protobuf psutil pillow
 ) else (
     pip install future pytest "pillow>=4.1.1"
 )
