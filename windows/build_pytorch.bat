@@ -119,7 +119,9 @@ for %%v in (%DESIRED_PYTHON_PREFIX%) do (
     if ERRORLEVEL 1 exit /b 1
     if "%BUILD_PYTHONLESS%" == "" (
         set "PATH=%CONDA_HOME%;%CONDA_HOME%\scripts;%CONDA_HOME%\Library\bin;%PATH%"
-        conda install -n %%v "numpy>=1.11"
+        conda update -n %%v numpy
+        if ERRORLEVEL 1 exit /b 1
+        set "PATH=%CONDA_HOME%\envs\%%v;%CONDA_HOME%\envs\%%v\scripts;%CONDA_HOME%\envs\%%v\Library\bin;%ORIG_PATH%"
         if ERRORLEVEL 1 exit /b 1
         call internal\test.bat
     )
