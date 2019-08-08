@@ -112,17 +112,17 @@ for %%v in (%DESIRED_PYTHON_PREFIX%) do (
     @setlocal
     :: Set Flags
     if NOT "%CUDA_VERSION%"=="cpu" (
-        set MAGMA_HOME=%cd%\\magma_%CUDA_PREFIX%_%BUILD_TYPE%
+        set MAGMA_HOME=%cd%\magma_%CUDA_PREFIX%_%BUILD_TYPE%
         set CUDNN_VERSION=7
     )
     call %CUDA_PREFIX%.bat
     if ERRORLEVEL 1 exit /b 1
     if "%BUILD_PYTHONLESS%" == "" (
+        @setlocal
         set "PATH=%CONDA_HOME%;%CONDA_HOME%\scripts;%CONDA_HOME%\Library\bin;%PATH%"
-        conda update -n %%v numpy
+        conda update -n %%v numpy -y
         if ERRORLEVEL 1 exit /b 1
-        set "PATH=%CONDA_HOME%\envs\%%v;%CONDA_HOME%\envs\%%v\scripts;%CONDA_HOME%\envs\%%v\Library\bin;%ORIG_PATH%"
-        if ERRORLEVEL 1 exit /b 1
+        @endlocal
         call internal\test.bat
     )
     if ERRORLEVEL 1 exit /b 1
