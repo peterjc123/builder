@@ -116,10 +116,14 @@ for %%v in (%DESIRED_PYTHON_PREFIX%) do (
         set CUDNN_VERSION=7
     )
     call %CUDA_PREFIX%.bat
-    IF ERRORLEVEL 1 exit /b 1
-    IF "%BUILD_PYTHONLESS%" == "" conda install "numpy>=1.11"
-    IF "%BUILD_PYTHONLESS%" == "" call internal\test.bat
-    IF ERRORLEVEL 1 exit /b 1
+    if ERRORLEVEL 1 exit /b 1
+    if "%BUILD_PYTHONLESS%" == "" (
+        set "PATH=%CONDA_HOME%;%CONDA_HOME%\scripts;%CONDA_HOME%\Library\bin;%PATH%"
+        conda install -n %%v "numpy>=1.11"
+        if ERRORLEVEL 1 exit /b 1
+        call internal\test.bat
+    )
+    if ERRORLEVEL 1 exit /b 1
     @endlocal
 )
 
