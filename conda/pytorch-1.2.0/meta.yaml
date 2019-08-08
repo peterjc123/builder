@@ -1,5 +1,5 @@
 package:
-  name: pytorch{{ environ.get('PYTORCH_PACKAGE_SUFFIX') }}
+  name: pytorch
   version: "{{ environ.get('PYTORCH_BUILD_VERSION') }}"
 
 source:
@@ -46,6 +46,8 @@ build:
     - DEBUG
     - USE_FBGEMM
     - USE_SCCACHE # [win]
+  features:
+{{ environ.get('CONDA_CPU_ONLY_FEATURE') }}
 
 test:
  imports:
