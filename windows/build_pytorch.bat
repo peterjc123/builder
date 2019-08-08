@@ -120,7 +120,8 @@ for %%v in (%DESIRED_PYTHON_PREFIX%) do (
     if "%BUILD_PYTHONLESS%" == "" (
         @setlocal
         set "PATH=%CONDA_HOME%;%CONDA_HOME%\scripts;%CONDA_HOME%\Library\bin;%PATH%"
-        conda install -n %%v "numpy>1.11" numba==0.44.0
+        conda uninstall -n %%v numpy -y
+        conda install -n %%v "numpy>=1.11" numba==0.44.0 -y
         if ERRORLEVEL 1 exit /b 1
         @endlocal
         call internal\test.bat
