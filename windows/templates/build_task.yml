@@ -25,8 +25,8 @@ jobs:
            eq('${{ parameters.wheelsEnabled }}', 'true'), eq('${{ parameters.cudaEnabled }}', 'true')))
   variables:
     - ${{ if eq(parameters.override, 'true') }}:
-      - name: PYTORCH_BUILD_VERSION
-        value: '1.2.0'
+      # - name: PYTORCH_BUILD_VERSION
+      #   value: '1.2.0'
       - name: PYTORCH_BUILD_NUMBER
         value: 1
       - name: PYTORCH_REPO
@@ -53,12 +53,15 @@ jobs:
         PY3.5:
           DESIRED_PYTHON: 3.5
           CUDA_VERSION: cpu
+          PYTORCH_BUILD_VERSION: '1.2.0+cpu'
         PY3.6:
           DESIRED_PYTHON: 3.6
           CUDA_VERSION: cpu
+          PYTORCH_BUILD_VERSION: '1.2.0+cpu'
         PY3.7:
           DESIRED_PYTHON: 3.7
           CUDA_VERSION: cpu
+          PYTORCH_BUILD_VERSION: '1.2.0+cpu'
       # ${{ if and(eq(parameters.package, 'Wheels'), eq(parameters.spec, 'CPU')) }}:
       #   LIBTORCH:
       #     DESIRED_PYTHON: 3
@@ -73,12 +76,15 @@ jobs:
         PY3.5_92:
           DESIRED_PYTHON: 3.5
           CUDA_VERSION: 92
+          PYTORCH_BUILD_VERSION: '1.2.0+cpu'
         PY3.6_92:
           DESIRED_PYTHON: 3.6
           CUDA_VERSION: 92
+          PYTORCH_BUILD_VERSION: '1.2.0+cpu'
         PY3.7_92:
           DESIRED_PYTHON: 3.7
           CUDA_VERSION: 92
+          PYTORCH_BUILD_VERSION: '1.2.0+cpu'
         # PY3.5_101:
         #   DESIRED_PYTHON: 3.5
         #   CUDA_VERSION: 101
@@ -93,10 +99,12 @@ jobs:
           DESIRED_PYTHON: 3
           BUILD_PYTHONLESS: 1
           CUDA_VERSION: 92
+          PYTORCH_BUILD_VERSION: '1.2.0'
         LIBTORCH_92_DEBUG:
           DESIRED_PYTHON: 3
           BUILD_PYTHONLESS: 1
           CUDA_VERSION: 92
+          PYTORCH_BUILD_VERSION: '1.2.0'
           DEBUG: 1
         # LIBTORCH_101:
         #   DESIRED_PYTHON: 3
@@ -122,8 +130,8 @@ jobs:
     parameters:
       msagent: ${{ parameters.msagent }}
 
-  - ${{ if and(eq(parameters.override, 'true'),  eq(parameters.package, 'Wheels')) }}:
-    - template: override_pytorch_version.yml
+  # - ${{ if and(eq(parameters.override, 'true'),  eq(parameters.package, 'Wheels')) }}:
+  #   - template: override_pytorch_version.yml
 
   # - template: setup_nightly_variables.yml
 
