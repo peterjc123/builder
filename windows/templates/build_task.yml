@@ -49,19 +49,19 @@ jobs:
   strategy:
     maxParallel: 10
     matrix:
-      ${{ if eq(parameters.spec, 'CPU') }}:
-        PY3.5:
-          DESIRED_PYTHON: 3.5
-          CUDA_VERSION: cpu
-          PYTORCH_BUILD_VERSION: '1.2.0+cpu'
-        PY3.6:
-          DESIRED_PYTHON: 3.6
-          CUDA_VERSION: cpu
-          PYTORCH_BUILD_VERSION: '1.2.0+cpu'
-        PY3.7:
-          DESIRED_PYTHON: 3.7
-          CUDA_VERSION: cpu
-          PYTORCH_BUILD_VERSION: '1.2.0+cpu'
+      # ${{ if eq(parameters.spec, 'CPU') }}:
+      #   PY3.5:
+      #     DESIRED_PYTHON: 3.5
+      #     CUDA_VERSION: cpu
+      #     PYTORCH_BUILD_VERSION: '1.2.0+cpu'
+      #   PY3.6:
+      #     DESIRED_PYTHON: 3.6
+      #     CUDA_VERSION: cpu
+      #     PYTORCH_BUILD_VERSION: '1.2.0+cpu'
+      #   PY3.7:
+      #     DESIRED_PYTHON: 3.7
+      #     CUDA_VERSION: cpu
+      #     PYTORCH_BUILD_VERSION: '1.2.0+cpu'
       # ${{ if and(eq(parameters.package, 'Wheels'), eq(parameters.spec, 'CPU')) }}:
       #   LIBTORCH:
       #     DESIRED_PYTHON: 3
@@ -94,18 +94,18 @@ jobs:
         # PY3.7_101:
         #   DESIRED_PYTHON: 3.7
         #   CUDA_VERSION: 101
-      ${{ if and(ne(parameters.spec, 'CPU'), eq(parameters.package, 'Wheels')) }}:
-        LIBTORCH_92:
-          DESIRED_PYTHON: 3
-          BUILD_PYTHONLESS: 1
-          CUDA_VERSION: 92
-          PYTORCH_BUILD_VERSION: '1.2.0'
-        LIBTORCH_92_DEBUG:
-          DESIRED_PYTHON: 3
-          BUILD_PYTHONLESS: 1
-          CUDA_VERSION: 92
-          PYTORCH_BUILD_VERSION: '1.2.0'
-          DEBUG: 1
+      # ${{ if and(ne(parameters.spec, 'CPU'), eq(parameters.package, 'Wheels')) }}:
+      #   LIBTORCH_92:
+      #     DESIRED_PYTHON: 3
+      #     BUILD_PYTHONLESS: 1
+      #     CUDA_VERSION: 92
+      #     PYTORCH_BUILD_VERSION: '1.2.0'
+      #   LIBTORCH_92_DEBUG:
+      #     DESIRED_PYTHON: 3
+      #     BUILD_PYTHONLESS: 1
+      #     CUDA_VERSION: 92
+      #     PYTORCH_BUILD_VERSION: '1.2.0'
+      #     DEBUG: 1
         # LIBTORCH_101:
         #   DESIRED_PYTHON: 3
         #   BUILD_PYTHONLESS: 1
