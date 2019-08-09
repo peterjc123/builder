@@ -25,6 +25,9 @@ set PYTORCH_BUILD_NUMBER=%~3
 
 :env_end
 
+echo passed: %~3
+echo after: %PYTORCH_BUILD_NUMBER%
+
 if NOT "%CUDA_VERSION%" == "cpu" (
     set CUDA_PREFIX=cuda%CUDA_VERSION%
 ) else (
