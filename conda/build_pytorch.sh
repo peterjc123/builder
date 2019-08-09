@@ -297,6 +297,7 @@ for py_ver in "${DESIRED_PYTHON[@]}"; do
                      --python "$py_ver" \
                      --output-folder "$output_folder" \
                      --no-test \
+                     --no-verify \
                      "$build_folder"
     echo "Finished conda-build at $(date)"
 
