@@ -35,12 +35,12 @@ jobs:
         value: 'v1.2.0'
       - name: TORCH_CONDA_BUILD_FOLDER
         value: 'pytorch-1.2.0'
-    - ${{ if eq(parameters.msagent, 'true') }}:
+    # - ${{ if eq(parameters.msagent, 'true') }}:
       - name: USE_SCCACHE
         value: 0
-    - ${{ if eq(parameters.msagent, 'false') }}:
-      - name: USE_SCCACHE
-        value: 1
+    # - ${{ if eq(parameters.msagent, 'false') }}:
+    #   - name: USE_SCCACHE
+    #     value: 1
     - ${{ if eq(parameters.package, 'Conda') }}:
       - group: peterjc_anaconda_token
       - name: PYTORCH_FINAL_PACKAGE_DIR
