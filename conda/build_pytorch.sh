@@ -31,10 +31,6 @@ retry () {
     $*  || (sleep 1 && $*) || (sleep 2 && $*) || (sleep 4 && $*) || (sleep 8 && $*)
 }
 
-activate_conda_env() {
-
-}
-
 # Parse arguments and determmine version
 ###########################################################
 if [[ -n "$DESIRED_CUDA" && -n "$PYTORCH_BUILD_VERSION" && -n "$PYTORCH_BUILD_NUMBER" ]]; then
