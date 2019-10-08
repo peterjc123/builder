@@ -316,14 +316,7 @@ for py_ver in "${DESIRED_PYTHON[@]}"; do
     # TODO these reqs are hardcoded for pytorch-nightly
     test_env="env_$folder_tag"
     retry conda create -yn "$test_env" python="$py_ver"
-    if [[ "$OSTYPE" == "msys" ]]; then
-        OLD_PATH="$PATH"
-        pushd "$tmp_conda/envs/$test_env"
-        export PATH="$(pwd):$(pwd)/Library/usr/bin:$(pwd)/Library/bin:$(pwd)/Scripts:$(pwd)/bin:$PATH"
-        popd
-    else
-        source activate "$test_env"
-    fi
+    source activate "$test_env"
 
     # Extract the package for testing
     ls -lah "$output_folder"
@@ -349,11 +342,7 @@ for py_ver in "${DESIRED_PYTHON[@]}"; do
     echo "$(date) :: Finished tests"
 
     # Clean up test folder
-    if [[ "$OSTYPE" == "msys" ]]; then
-        export PATH="$OLD_PATH"
-    else
-        source deactivate
-    fi
+    source deactivate
     conda env remove -yn "$test_env"
     rm -rf "$output_folder"
 done

@@ -67,7 +67,11 @@ if [[ "$package_type" == conda || "$(uname)" == Darwin ]]; then
     # that will make the environment consistent again.
     if [[ "$cuda_ver" != 'cpu' ]]; then
         # Windows CUDA 9.2 packages is not available in the defaults channel.
-        retry conda install -yq -c defaults -c numba/label/dev cudatoolkit=$cuda_ver_majmin
+        if [[ "$OSTYPE" == "msys" && "$cuda_ver_majmin" == "9.2" ]]; then
+            retry conda install -yq -c numba/label/dev --no-deps cudatoolkit=$cuda_ver_majmin
+        else
+            retry conda install -yq cudatoolkit=$cuda_ver_majmin
+        fi
     else
         # We DON'T want to install cpuonly, because it should not be
         # necessary for OS X PyTorch which is always cpu only by default
