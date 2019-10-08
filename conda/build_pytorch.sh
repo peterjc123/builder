@@ -31,6 +31,10 @@ retry () {
     $*  || (sleep 1 && $*) || (sleep 2 && $*) || (sleep 4 && $*) || (sleep 8 && $*)
 }
 
+activate_conda_env() {
+
+}
+
 # Parse arguments and determmine version
 ###########################################################
 if [[ -n "$DESIRED_CUDA" && -n "$PYTORCH_BUILD_VERSION" && -n "$PYTORCH_BUILD_NUMBER" ]]; then
@@ -188,9 +192,8 @@ elif [[ "$OSTYPE" == "msys" ]]; then
     curl -sSk https://repo.continuum.io/miniconda/Miniconda3-latest-Windows-x86_64.exe -o "$miniconda_exe"
     "$SOURCE_DIR/install_conda.bat" && rm "$miniconda_exe"
     pushd $tmp_conda
-    . ./etc/profile.d/conda.sh
+    export PATH="$(pwd):$(pwd)/Library/usr/bin:$(pwd)/Library/bin:$(pwd)/Scripts:$(pwd)/bin:$PATH"
     popd
-    conda activate
     retry conda install -yq conda-build
 fi
 
@@ -314,7 +317,10 @@ for py_ver in "${DESIRED_PYTHON[@]}"; do
     test_env="env_$folder_tag"
     retry conda create -yn "$test_env" python="$py_ver"
     if [[ "$OSTYPE" == "msys" ]]; then
-        conda activate "$test_env"
+        OLD_PATH="$PATH"
+        pushd "$tmp_conda/envs/$test_env"
+        export PATH="$(pwd):$(pwd)/Library/usr/bin:$(pwd)/Library/bin:$(pwd)/Scripts:$(pwd)/bin:$PATH"
+        popd
     else
         source activate "$test_env"
     fi
@@ -344,7 +350,7 @@ for py_ver in "${DESIRED_PYTHON[@]}"; do
 
     # Clean up test folder
     if [[ "$OSTYPE" == "msys" ]]; then
-        conda deactivate
+        export PATH="$OLD_PATH"
     else
         source deactivate
     fi
