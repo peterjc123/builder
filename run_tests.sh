@@ -67,12 +67,12 @@ if [[ "$package_type" == conda || "$(uname)" == Darwin ]]; then
     # that will make the environment consistent again.
     if [[ "$cuda_ver" != 'cpu' ]]; then
         # Windows CUDA 9.2 packages is not available in the defaults channel.
-        retry conda install -yq -c defaults -c numba/label/dev -S cudatoolkit=$cuda_ver_majmin
+        retry conda install -yq -S -c defaults -c numba/label/dev cudatoolkit=$cuda_ver_majmin
     else
         # We DON'T want to install cpuonly, because it should not be
         # necessary for OS X PyTorch which is always cpu only by default
         if [[ "$(uname)" != Darwin  ]]; then
-            retry conda install -yq cpuonly -c pytorch
+            retry conda install -yq -S cpuonly -c pytorch
         fi
     fi
     retry conda install -yq -S cffi future hypothesis mkl>=2018 ninja numpy>=1.11 protobuf pytest setuptools six typing pyyaml requests
