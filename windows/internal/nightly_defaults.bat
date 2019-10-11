@@ -149,7 +149,7 @@ if "%PYTORCH_BUILD_VERSION%" == "" set PYTORCH_BUILD_VERSION=1.3.0
 
 if "%~1" == "Wheels" (
     if "%BUILD_PYTHONLESS%" == "" (
-        if not "%CUDA_VERSION%" == "100" (
+        if not "%CUDA_VERSION%" == "101" (
             set PYTORCH_BUILD_VERSION=%PYTORCH_BUILD_VERSION%+%_DESIRED_CUDA%
         )
     )
