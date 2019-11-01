@@ -128,6 +128,7 @@ set PYTORCH_BRANCH=%last_commit%
 :latest_end
 
 git checkout "%PYTORCH_BRANCH%"
+git submodule sync --recursive
 git submodule update
 popd
 
