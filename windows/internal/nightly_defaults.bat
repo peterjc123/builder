@@ -129,7 +129,7 @@ set PYTORCH_BRANCH=%last_commit%
 
 git checkout "%PYTORCH_BRANCH%"
 git submodule sync --recursive
-git submodule update
+git submodule update --depth 50
 popd
 
 :clone_end
