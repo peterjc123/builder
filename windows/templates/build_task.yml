@@ -142,7 +142,7 @@ jobs:
     ${{ if eq(parameters.msagent, 'true') }}:
       vmImage: 'vs2017-win2016'
     ${{ if eq(parameters.msagent, 'false') }}:
-      name: 'pytorch'
+      name: 'release'
 
   steps:
   - script: |

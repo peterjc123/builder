@@ -102,7 +102,7 @@ if "%PYTORCH_REPO%" == "" set PYTORCH_REPO=pytorch
 ::   my_branch_name) or can be a git commit (git checkout 4b2674n...). Default
 ::   is 'latest', which is a special term that signals to pull the last commit
 ::   before 0:00 midnight on the NIGHTLIES_DATE
-if "%PYTORCH_BRANCH%" == "" set PYTORCH_BRANCH=latest
+if "%PYTORCH_BRANCH%" == "" set PYTORCH_BRANCH=release/1.5
 
 :: Clone the requested pytorch checkout
 if exist "%NIGHTLIES_PYTORCH_ROOT%" ( goto clone_end ) else ( goto clone_start )
@@ -144,11 +144,11 @@ if "%CUDA_VERSION%" == "cpu" (
 ::       pytorch-nightly==1.0.0.dev20180908
 ::   or in manylinux like
 ::       torch_nightly-1.0.0.dev20180908-cp27-cp27m-linux_x86_64.whl
-if "%PYTORCH_BUILD_VERSION%" == "" set PYTORCH_BUILD_VERSION=1.5.0.dev%NIGHTLIES_DATE_COMPACT%
+if "%PYTORCH_BUILD_VERSION%" == "" set PYTORCH_BUILD_VERSION=1.5.0
 
 if "%~1" == "Wheels" (
     if "%BUILD_PYTHONLESS%" == "" (
-        if not "%CUDA_VERSION%" == "101" (
+        if not "%CUDA_VERSION%" == "102" (
             set PYTORCH_BUILD_VERSION=%PYTORCH_BUILD_VERSION%+%_DESIRED_CUDA%
         )
     )
