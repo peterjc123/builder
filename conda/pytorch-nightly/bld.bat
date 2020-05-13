@@ -71,10 +71,13 @@ set CMAKE_GENERATOR=Ninja
 
 IF NOT "%USE_SCCACHE%" == "1" goto sccache_end
 
-set SCCACHE_IDLE_TIMEOUT=0
-
 sccache --stop-server
+@setlocal
+set SCCACHE_IDLE_TIMEOUT=0
+set RUST_LOG=sccache=trace
+set SCCACHE_ERROR_LOG=%USERPROFILE%\sccache_trace.log
 sccache --start-server
+@endlocal
 sccache --zero-stats
 
 set CC=sccache-cl
@@ -83,7 +86,10 @@ set CXX=sccache-cl
 :sccache_end
 
 python setup.py install
-if errorlevel 1 exit /b 1
+if errorlevel 1 (
+    tail -n 100 %USERPROFILE%\sccache_trace.log
+    exit /b 1
+)
 
 IF "%USE_SCCACHE%" == "1" (
     sccache --show-stats

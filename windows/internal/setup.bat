@@ -27,10 +27,14 @@ if "%CXX%"=="sccache-cl" goto sccache_start
 goto sccache_end
 
 :sccache_start
-set SCCACHE_IDLE_TIMEOUT=0
 
 sccache --stop-server
+@setlocal
+set SCCACHE_IDLE_TIMEOUT=0
+set RUST_LOG=sccache=trace
+set SCCACHE_ERROR_LOG=%USERPROFILE%\sccache_trace.log
 sccache --start-server
+@endlocal
 sccache --zero-stats
 
 :sccache_end
@@ -87,8 +91,14 @@ goto build_end
 pip wheel -vvv -e . --no-deps --wheel-dir "%PYTORCH_FINAL_PACKAGE_DIR%"
 
 :build_end
-IF ERRORLEVEL 1 exit /b 1
-IF NOT ERRORLEVEL 0 exit /b 1
+IF ERRORLEVEL 1 (
+    tail -n 100 %USERPROFILE%\sccache_trace.log
+    exit /b 1
+)
+IF NOT ERRORLEVEL 0 ( 
+    tail -n 100 %USERPROFILE%\sccache_trace.log
+    exit /b 1
+)
 
 if "%CXX%"=="sccache cl" goto sccache_cleanup
 if "%CXX%"=="sccache-cl" goto sccache_cleanup
