@@ -41,6 +41,7 @@ if "%BUILD_PYTHONLESS%" == "" goto pytorch else goto libtorch
 :libtorch
 set VARIANT=static-with-deps
 set BUILD_SHARED_LIBS=OFF
+set CMAKE_VERBOSE_MAKEFILE=1
 
 mkdir libtorch
 mkdir libtorch\bin
