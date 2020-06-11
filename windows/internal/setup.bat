@@ -39,7 +39,8 @@ sccache --zero-stats
 if "%BUILD_PYTHONLESS%" == "" goto pytorch else goto libtorch
 
 :libtorch
-set VARIANT=shared-with-deps
+set VARIANT=static-with-deps
+set BUILD_SHARED_LIBS=OFF
 
 mkdir libtorch
 mkdir libtorch\bin
